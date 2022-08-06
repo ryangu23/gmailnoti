@@ -1,4 +1,4 @@
 # gmailnoti
 gmail reminder email spam based on nodejs express server to store and serve reminders, google apps script to fetch and distribute email
 
-proof of concept only, no styling
+as of 8/6 2:20 am- proof of concept only, no styling
