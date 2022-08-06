@@ -1,0 +1,91 @@
+<html>
+  <head>
+    <title>REMINDERS</title>
+  </head>
+  <body>
+    <h1>REMINDERS</h1>
+    <input id="reminder">
+    <button onclick="pushremind(document.getElementById('reminder').value);document.getElementById('reminder').value=''" id="btn">submit reminder</button>
+    <div id="reminderlist"></div>
+
+    <script>
+
+      let list = [];
+      
+      const init = () => {
+        fetch("https://remindserver.ryangu23.repl.co/ret", {
+          headers: {
+            "Content-Type":"application/json"
+          },
+          method: "GET"
+        }).then(res => res.json()).then(data => {
+          console.log(data);
+          list = data;
+
+          makelist(data);
+          
+          //data.forEach(e => document.getElementById("reminderlist").innerHTML += `-${e}\n`);
+        });
+      }
+
+      const pushremind = (remind_) => {
+        //console.log(remind_);
+        fetch("https://remindserver.ryangu23.repl.co/push", {
+          headers: {
+            "Content-Type":"application/json"
+          },
+          method: "POST",
+          body: JSON.stringify({n: remind_})
+        }).then(res => res.json()).then(data => {
+          console.log(data);
+
+          //document.getElementById("reminderlist").innerHTML = "";
+          makelist(data);
+          //data.forEach(e => document.getElementById("reminderlist").innerHTML += `-${e}\n`);
+        });
+      }
+
+      const remove = (remove_) => {
+        fetch("https://remindserver.ryangu23.repl.co/remove", {
+          headers: {
+            "Content-Type":"application/json"
+          },
+          method: "POST",
+          body: JSON.stringify({n: remove_})
+        }).then(res => res.json()).then(data => {
+          console.log(data);
+
+          makelist(data);
+        })
+      }
+
+      const makelist = (v) => {
+        if (!v || v.length == 0) {document.getElementById("reminderlist").innerHTML = "NO REMINDERS"}
+        else {
+          document.getElementById("reminderlist").innerHTML = "";
+          v.forEach(e => {
+            const node = document.createElement("li");
+            const textnode = document.createTextNode(e);
+            node.appendChild(textnode);
+            document.getElementById("reminderlist").appendChild(node);
+
+            node.addEventListener("click", () => {
+              console.log(e);
+
+              remove(e);
+            });
+          });
+        }
+      }
+
+      document.getElementById("reminder").addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          document.getElementById("btn").click();
+        }
+      });
+      
+      init();
+    </script>
+  </body>
+</html>
